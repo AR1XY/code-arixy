@@ -1,4 +1,4 @@
-щ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* Светлая тема (по умолчанию) */
         :root {
             --bg: #d8f3dc;
             --card: #f0fbf4;
@@ -20,7 +19,6 @@
             --badge-bg: #d8f3dc;
         }
         
-        /* Тёмная тема */
         body.dark {
             --bg: #0d1f1a;
             --card: #1a2e25;
@@ -56,18 +54,31 @@
         .theme-toggle {
             position: absolute;
             top: 20px;
-            right: 22px;
+            left: 22px;
             background: var(--badge-bg);
             border: none;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             cursor: pointer;
             padding: 8px 12px;
             border-radius: 40px;
             transition: 0.2s;
+            z-index: 20;
         }
         .header { text-align: center; margin-bottom: 24px; margin-top: 8px; }
-        .header h1 { color: var(--text); font-size: 2rem; }
+        .header h1 { 
+            color: var(--text); 
+            font-size: 2rem; 
+            display: inline-block;
+            padding: 0 20px;
+            cursor: default;
+        }
         .header p { color: var(--text-secondary); font-size: 0.85rem; }
+        
+        /* Секретная область (логотип) */
+        .secret-area {
+            display: inline-block;
+            cursor: default;
+        }
         
         .cipher-select { margin-bottom: 20px; }
         .cipher-select label { display: block; color: var(--text); font-weight: 600; margin-bottom: 8px; }
@@ -140,6 +151,8 @@
             .card { padding: 20px 16px; }
             .result-box { flex-direction: column; align-items: flex-start; }
             .copy-btn { align-self: flex-end; }
+            .theme-toggle { top: 16px; left: 16px; padding: 6px 10px; font-size: 1.1rem; }
+            .header h1 { font-size: 1.6rem; }
         }
     </style>
 </head>
@@ -148,7 +161,7 @@
     <div class="card">
         <button class="theme-toggle" id="themeToggle">🌙</button>
         <div class="header">
-            <h1>Coder AR1XY 🌿</h1>
+            <h1 id="secretLogo">Coder AR1XY 🌿</h1>
             <p>мультишифратор от AR1XY</p>
         </div>
 
@@ -210,27 +223,26 @@
     const CODARIXY_KEY = "codarixy_secret_key";
     let secretRevealed = false;
 
-    // ========== ПАСХАЛКА (левый верхний угол карточки 10 сек) ==========
+    // ========== ПАСХАЛКА (зажать логотип 10 сек) ==========
     let timer = null;
-    const card = document.querySelector('.card');
+    const secretLogo = document.getElementById('secretLogo');
     
     function showSecretKey() {
         if(!secretRevealed){
             secretRevealed = true;
-            alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ "CODARIXY":\n\n${CODARIXY_KEY}\n\nОн работает с любым текстом: русский, english, эмодзи 😀`);
+            alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ "CODARIXY":\n\n${CODARIXY_KEY}\n\nCodarixy работает с русским, английским, эмодзи 😀👍`);
         }
     }
     
-    card.addEventListener('touchstart', (e) => { 
-        if(e.target.closest('.theme-toggle')) return;
+    secretLogo.addEventListener('touchstart', (e) => { 
+        e.preventDefault();
         timer = setTimeout(showSecretKey, 10000);
     });
-    card.addEventListener('touchend', () => { if(timer) clearTimeout(timer); });
-    card.addEventListener('mousedown', (e) => { 
-        if(e.target.closest('.theme-toggle')) return;
+    secretLogo.addEventListener('touchend', () => { if(timer) clearTimeout(timer); });
+    secretLogo.addEventListener('mousedown', () => { 
         timer = setTimeout(showSecretKey, 10000);
     });
-    card.addEventListener('mouseup', () => { if(timer) clearTimeout(timer); });
+    secretLogo.addEventListener('mouseup', () => { if(timer) clearTimeout(timer); });
 
     // ========== ШИФРЫ ==========
     const cipherSelect = document.getElementById('cipherType');
@@ -243,11 +255,11 @@
     });
     shiftSlider.addEventListener('input', () => shiftSpan.innerText = shiftSlider.value);
 
-    // Base64 (работает с любым текстом)
+    // Base64
     function base64Enc(str) { return btoa(unescape(encodeURIComponent(str))); }
     function base64Dec(str) { return decodeURIComponent(escape(atob(str))); }
 
-    // ROT13 (только латиница)
+    // ROT13
     function rot13(str) {
         return str.replace(/[a-zA-Z]/g, c => {
             const base = c <= 'Z' ? 65 : 97;
@@ -255,7 +267,7 @@
         });
     }
 
-    // Atbash (только латиница)
+    // Atbash
     function atbash(str) {
         return str.replace(/[a-zA-Z]/g, c => {
             const base = c <= 'Z' ? 65 : 97;
@@ -263,7 +275,7 @@
         });
     }
 
-    // Цезарь (русский + английский)
+    // Цезарь (рус+eng)
     const rusUpper = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
     const rusLower = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
     const engUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -285,18 +297,24 @@
     function caesarEnc(str, shift) { return caesarShift(str, shift); }
     function caesarDec(str, shift) { return caesarShift(str, (26 - shift) % 26); }
 
-    // ========== CODARIXY (работает с любыми символами: русский, английский, эмодзи) ==========
-    function codarixyWithKey(str, key) {
-        let result = '';
-        for(let i = 0; i < str.length; i++) {
-            result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+    // ========== CODARIXY (работает с любыми символами через Uint8Array) ==========
+    function codarixyWithKey(text, key) {
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder();
+        const textBytes = encoder.encode(text);
+        const keyBytes = encoder.encode(key);
+        const result = new Uint8Array(textBytes.length);
+        for (let i = 0; i < textBytes.length; i++) {
+            result[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
         }
-        return result;
+        return decoder.decode(result);
     }
+    
     function codarixyEncrypt(plain, key) {
         const encrypted = codarixyWithKey(plain, key);
         return btoa(encrypted);
     }
+    
     function codarixyDecrypt(encoded, key) {
         const encrypted = atob(encoded);
         return codarixyWithKey(encrypted, key);
