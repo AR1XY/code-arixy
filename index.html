@@ -291,25 +291,42 @@
     function caesarEnc(str, shift) { return caesarShift(str, shift); }
     function caesarDec(str, shift) { return caesarShift(str, (26 - shift) % 26); }
 
-    // ========== CODARIXY (ИСПРАВЛЕН — РАБОТАЕТ С РУССКИМ, АНГЛ, ЭМОДЗИ) ==========
-    function codarixyWithKey(str, key) {
-        let result = '';
-        for (let i = 0; i < str.length; i++) {
-            const charCode = str.charCodeAt(i);
-            const keyCode = key.charCodeAt(i % key.length);
-            result += String.fromCharCode(charCode ^ keyCode);
-        }
-        return result;
-    }
-    
+    // ========== CODARIXY (РАБОТАЕТ С ЭМОДЗИ, РУССКИМ, АНГЛ) ==========
     function codarixyEncrypt(plain, key) {
-        const encrypted = codarixyWithKey(plain, key);
-        return btoa(unescape(encodeURIComponent(encrypted)));
+        const encoder = new TextEncoder();
+        const plainBytes = encoder.encode(plain);
+        const keyBytes = encoder.encode(key);
+        
+        const result = new Uint8Array(plainBytes.length);
+        for (let i = 0; i < plainBytes.length; i++) {
+            result[i] = plainBytes[i] ^ keyBytes[i % keyBytes.length];
+        }
+        
+        let binary = '';
+        for (let i = 0; i < result.length; i++) {
+            binary += String.fromCharCode(result[i]);
+        }
+        return btoa(binary);
     }
-    
+
     function codarixyDecrypt(encoded, key) {
-        const encrypted = decodeURIComponent(escape(atob(encoded)));
-        return codarixyWithKey(encrypted, key);
+        const decoder = new TextDecoder();
+        const encoder = new TextEncoder();
+        
+        const binary = atob(encoded);
+        const encryptedBytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            encryptedBytes[i] = binary.charCodeAt(i);
+        }
+        
+        const keyBytes = encoder.encode(key);
+        
+        const result = new Uint8Array(encryptedBytes.length);
+        for (let i = 0; i < encryptedBytes.length; i++) {
+            result[i] = encryptedBytes[i] ^ keyBytes[i % keyBytes.length];
+        }
+        
+        return decoder.decode(result);
     }
 
     // ========== ОБЩИЕ ФУНКЦИИ ==========
