@@ -74,12 +74,6 @@
         }
         .header p { color: var(--text-secondary); font-size: 0.85rem; }
         
-        /* Секретная область (логотип) */
-        .secret-area {
-            display: inline-block;
-            cursor: default;
-        }
-        
         .cipher-select { margin-bottom: 20px; }
         .cipher-select label { display: block; color: var(--text); font-weight: 600; margin-bottom: 8px; }
         select, .caesar-slider {
@@ -297,26 +291,24 @@
     function caesarEnc(str, shift) { return caesarShift(str, shift); }
     function caesarDec(str, shift) { return caesarShift(str, (26 - shift) % 26); }
 
-    // ========== CODARIXY (работает с любыми символами через Uint8Array) ==========
-    function codarixyWithKey(text, key) {
-        const encoder = new TextEncoder();
-        const decoder = new TextDecoder();
-        const textBytes = encoder.encode(text);
-        const keyBytes = encoder.encode(key);
-        const result = new Uint8Array(textBytes.length);
-        for (let i = 0; i < textBytes.length; i++) {
-            result[i] = textBytes[i] ^ keyBytes[i % keyBytes.length];
+    // ========== CODARIXY (ИСПРАВЛЕН — РАБОТАЕТ С РУССКИМ, АНГЛ, ЭМОДЗИ) ==========
+    function codarixyWithKey(str, key) {
+        let result = '';
+        for (let i = 0; i < str.length; i++) {
+            const charCode = str.charCodeAt(i);
+            const keyCode = key.charCodeAt(i % key.length);
+            result += String.fromCharCode(charCode ^ keyCode);
         }
-        return decoder.decode(result);
+        return result;
     }
     
     function codarixyEncrypt(plain, key) {
         const encrypted = codarixyWithKey(plain, key);
-        return btoa(encrypted);
+        return btoa(unescape(encodeURIComponent(encrypted)));
     }
     
     function codarixyDecrypt(encoded, key) {
-        const encrypted = atob(encoded);
+        const encrypted = decodeURIComponent(escape(atob(encoded)));
         return codarixyWithKey(encrypted, key);
     }
 
@@ -364,6 +356,7 @@
             const res = encrypt(text, cipher, shift);
             setResult(res, `зашифровано ✅`);
         } catch(e) {
+            console.error(e);
             setResult("Ошибка шифрования", "ошибка");
         }
     };
@@ -377,6 +370,7 @@
             const res = decrypt(data, cipher, shift);
             setResult(res, `расшифровано ✅`);
         } catch(e) {
+            console.error(e);
             setResult("❌ Ошибка расшифровки", "ошибка");
         }
     };
