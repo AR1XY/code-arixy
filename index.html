@@ -3,84 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>codarixy — мультишифратор</title>
+    <title>Coder AR1XY — мультишифратор</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none; /* чтобы не выделялся угол */
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: #d8f3dc;
-            font-family: 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-
-        .container {
-            max-width: 650px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
+        .container { max-width: 650px; width: 100%; margin: 0 auto; }
         .card {
             background: #f0fbf4;
             border-radius: 42px;
             padding: 28px 22px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             border: 1px solid #b7e4c7;
-            transition: all 0.2s;
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            position: relative;
-        }
-
-        /* Секретный угол (левый верхний угол всей карточки) */
+        .header { text-align: center; margin-bottom: 24px; position: relative; }
         .secret-corner {
             position: absolute;
             top: 0;
             left: 0;
             width: 80px;
             height: 80px;
-            cursor: default;
-            z-index: 10;
             background: transparent;
+            z-index: 10;
         }
-
-        .header h1 {
-            font-size: 2rem;
-            color: #1b4332;
-            letter-spacing: -0.5px;
-        }
-
-        .header p {
-            color: #2d6a4f;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* select, input, textarea */
-        .cipher-select {
-            margin-bottom: 20px;
-        }
-
-        .cipher-select label {
-            display: block;
-            color: #1b4332;
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            margin-left: 6px;
-        }
-
+        .header h1 { color: #1b4332; font-size: 2rem; }
+        .header p { color: #2d6a4f; font-size: 0.85rem; }
+        .cipher-select { margin-bottom: 20px; }
+        .cipher-select label { display: block; color: #1b4332; font-weight: 600; margin-bottom: 8px; }
         select, .caesar-slider {
             width: 100%;
             padding: 14px;
@@ -89,16 +45,7 @@
             border-radius: 28px;
             font-size: 1rem;
             color: #1b4332;
-            font-family: inherit;
-            outline: none;
-            transition: 0.2s;
         }
-
-        select:focus, textarea:focus {
-            border-color: #2d6a4f;
-            box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.2);
-        }
-
         .caesar-slider {
             margin-top: 10px;
             display: flex;
@@ -106,39 +53,19 @@
             align-items: center;
             flex-wrap: wrap;
         }
-
-        input[type="range"] {
-            flex: 2;
-            min-width: 150px;
-        }
-
-        .shift-value {
-            background: #d8f3dc;
-            padding: 6px 14px;
-            border-radius: 40px;
-            font-weight: bold;
-            color: #1b4332;
-        }
-
+        input[type="range"] { flex: 2; min-width: 150px; }
+        .shift-value { background: #d8f3dc; padding: 6px 14px; border-radius: 40px; font-weight: bold; }
         textarea {
             width: 100%;
             padding: 16px;
             background: white;
             border: 1px solid #b7e4c7;
             border-radius: 28px;
-            font-family: 'Courier New', monospace;
+            font-family: monospace;
             font-size: 0.95rem;
             resize: vertical;
-            color: #1b4332;
         }
-
-        .buttons {
-            display: flex;
-            gap: 14px;
-            margin: 24px 0 28px;
-            flex-wrap: wrap;
-        }
-
+        .buttons { display: flex; gap: 14px; margin: 24px 0 28px; flex-wrap: wrap; }
         button {
             flex: 1;
             padding: 14px 0;
@@ -147,40 +74,14 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            transition: 0.2s;
             background: #40916c;
             color: white;
-            font-family: inherit;
         }
-
-        button:active {
-            transform: scale(0.97);
-        }
-
-        .result-section {
-            margin-bottom: 24px;
-        }
-
-        .result-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            margin-left: 6px;
-        }
-
-        .result-label span:first-child {
-            font-weight: 600;
-            color: #1b4332;
-        }
-
-        .result-label span:last-child {
-            background: #d8f3dc;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            color: #2d6a4f;
-        }
-
+        button:active { transform: scale(0.97); }
+        .result-section { margin-bottom: 24px; }
+        .result-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .result-label span:first-child { font-weight: 600; color: #1b4332; }
+        .result-label span:last-child { background: #d8f3dc; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; color: #2d6a4f; }
         .result-box {
             background: white;
             border-radius: 28px;
@@ -194,56 +95,23 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-
-        .result-text {
-            flex: 1;
-            color: #1b4332;
-        }
-
-        .copy-btn {
-            background: #d8f3dc;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            color: #1b4332;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .footer {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid #b7e4c7;
-        }
-
-        .footer a {
-            color: #2d6a4f;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
+        .result-text { flex: 1; color: #1b4332; }
+        .copy-btn { background: #d8f3dc; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; cursor: pointer; }
+        .footer { text-align: center; padding-top: 20px; border-top: 1px solid #b7e4c7; }
+        .footer a { color: #2d6a4f; text-decoration: none; font-weight: 600; }
         @media (max-width: 500px) {
-            .card {
-                padding: 20px 16px;
-            }
-            .result-box {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .copy-btn {
-                align-self: flex-end;
-            }
+            .card { padding: 20px 16px; }
+            .result-box { flex-direction: column; align-items: flex-start; }
+            .copy-btn { align-self: flex-end; }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card">
-        <!-- секретный угол (левый верх) -->
         <div id="secretCorner" class="secret-corner"></div>
-
         <div class="header">
-            <h1>codarixy 🌿</h1>
+            <h1>Coder AR1XY 🌿</h1>
             <p>мультишифратор от AR1XY</p>
         </div>
 
@@ -252,9 +120,9 @@
             <select id="cipherType">
                 <option value="base64">Base64</option>
                 <option value="rot13">ROT13 (только латиница)</option>
-                <option value="atbash">Atbash</option>
-                <option value="caesar">Цезарь (со сдвигом)</option>
-                <option value="xor">XOR (секретный ключ)</option>
+                <option value="atbash">Atbash (только латиница)</option>
+                <option value="caesar">Цезарь (рус/eng)</option>
+                <option value="codarixy">Codarixy</option>
             </select>
             <div id="caesarControl" style="display: none;" class="caesar-slider">
                 <span>Сдвиг:</span>
@@ -263,7 +131,7 @@
             </div>
         </div>
 
-        <textarea id="inputText" rows="4" placeholder="Введите текст для шифрования / расшифровки..."></textarea>
+        <textarea id="inputText" rows="4" placeholder="Введите текст..."></textarea>
 
         <div class="buttons">
             <button id="encryptBtn">🔒 ЗАШИФРОВАТЬ</button>
@@ -288,56 +156,34 @@
 </div>
 
 <script>
-    // ---------- СЕКРЕТНЫЙ XOR КЛЮЧ ----------
-    const XOR_KEY = "codarixy_secret_key";
-    let secretKeyRevealed = false;
+    // ========== СЕКРЕТНЫЙ КЛЮЧ ДЛЯ CODARIXY ==========
+    const CODARIXY_KEY = "codarixy_secret_key";
+    let secretRevealed = false;
 
-    // ---------- СЕКРЕТНЫЙ УГОЛ (10 секунд) ----------
-    let pressTimer = null;
+    // ========== ПАСХАЛКА (левый верхний угол 10 сек) ==========
+    let timer = null;
     const corner = document.getElementById('secretCorner');
-    corner.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        pressTimer = setTimeout(() => {
-            if (!secretKeyRevealed) {
-                secretKeyRevealed = true;
-                alert(`🔐 Секретный ключ для XOR:\n\n${XOR_KEY}\n\nИспользуйте его для шифрования и расшифровки.`);
-            }
-        }, 10000);
-    });
-    corner.addEventListener('touchend', () => {
-        if (pressTimer) clearTimeout(pressTimer);
-    });
-    corner.addEventListener('mousedown', () => {
-        pressTimer = setTimeout(() => {
-            if (!secretKeyRevealed) {
-                secretKeyRevealed = true;
-                alert(`🔐 Секретный ключ для XOR:\n\n${XOR_KEY}\n\nИспользуйте его для шифрования и расшифровки.`);
-            }
-        }, 10000);
-    });
-    corner.addEventListener('mouseup', () => {
-        if (pressTimer) clearTimeout(pressTimer);
-    });
+    corner.addEventListener('touchstart', (e) => { e.preventDefault(); timer = setTimeout(() => { if(!secretRevealed){ secretRevealed=true; alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ "CODARIXY":\n\n${CODARIXY_KEY}`); } }, 10000); });
+    corner.addEventListener('touchend', () => { if(timer) clearTimeout(timer); });
+    corner.addEventListener('mousedown', () => { timer = setTimeout(() => { if(!secretRevealed){ secretRevealed=true; alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ:\n\n${CODARIXY_KEY}`); } }, 10000); });
+    corner.addEventListener('mouseup', () => { if(timer) clearTimeout(timer); });
 
-    // ---------- ЛОГИКА ШИФРОВ ----------
+    // ========== ШИФРЫ ==========
     const cipherSelect = document.getElementById('cipherType');
-    const caesarControl = document.getElementById('caesarControl');
+    const caesarCtrl = document.getElementById('caesarControl');
     const shiftSlider = document.getElementById('shiftSlider');
     const shiftSpan = document.getElementById('shiftValue');
 
     cipherSelect.addEventListener('change', () => {
-        const isCaesar = cipherSelect.value === 'caesar';
-        caesarControl.style.display = isCaesar ? 'flex' : 'none';
+        caesarCtrl.style.display = cipherSelect.value === 'caesar' ? 'flex' : 'none';
     });
+    shiftSlider.addEventListener('input', () => shiftSpan.innerText = shiftSlider.value);
 
-    shiftSlider.addEventListener('input', () => {
-        shiftSpan.innerText = shiftSlider.value;
-    });
-
-    // Вспомогательные функции шифров
+    // Base64 (работает с любым текстом)
     function base64Enc(str) { return btoa(unescape(encodeURIComponent(str))); }
     function base64Dec(str) { return decodeURIComponent(escape(atob(str))); }
 
+    // ROT13 (только латиница)
     function rot13(str) {
         return str.replace(/[a-zA-Z]/g, c => {
             const base = c <= 'Z' ? 65 : 97;
@@ -345,6 +191,7 @@
         });
     }
 
+    // Atbash (только латиница)
     function atbash(str) {
         return str.replace(/[a-zA-Z]/g, c => {
             const base = c <= 'Z' ? 65 : 97;
@@ -352,55 +199,68 @@
         });
     }
 
-    function caesarEnc(str, shift) {
-        return str.replace(/[a-zA-Z]/g, c => {
-            const base = c <= 'Z' ? 65 : 97;
-            return String.fromCharCode((c.charCodeAt(0) - base + shift) % 26 + base);
-        });
-    }
-    function caesarDec(str, shift) { return caesarEnc(str, 26 - shift); }
+    // Цезарь (русский + английский)
+    const rusUpper = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+    const rusLower = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+    const engUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const engLower = 'abcdefghijklmnopqrstuvwxyz';
 
-    // XOR с ключом (работает с любым текстом)
-    function xorWithKey(data, key) {
+    function caesarShift(str, shift) {
+        return str.split('').map(ch => {
+            let idx = rusUpper.indexOf(ch);
+            if(idx !== -1) return rusUpper[(idx + shift) % 33];
+            idx = rusLower.indexOf(ch);
+            if(idx !== -1) return rusLower[(idx + shift) % 33];
+            idx = engUpper.indexOf(ch);
+            if(idx !== -1) return engUpper[(idx + shift) % 26];
+            idx = engLower.indexOf(ch);
+            if(idx !== -1) return engLower[(idx + shift) % 26];
+            return ch;
+        }).join('');
+    }
+    function caesarEnc(str, shift) { return caesarShift(str, shift); }
+    function caesarDec(str, shift) { return caesarShift(str, (26 - shift) % 26); }
+
+    // Codarixy (XOR с ключом, работает с любым текстом)
+    function codarixyWithKey(str, key) {
         let result = '';
-        for (let i = 0; i < data.length; i++) {
-            result += String.fromCharCode(data.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+        for(let i = 0; i < str.length; i++) {
+            result += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
         }
         return result;
     }
-    function xorEncrypt(plain, key) {
-        return btoa(xorWithKey(plain, key));
+    function codarixyEncrypt(plain, key) {
+        return btoa(codarixyWithKey(plain, key));
     }
-    function xorDecrypt(encoded, key) {
+    function codarixyDecrypt(encoded, key) {
         const str = atob(encoded);
-        return xorWithKey(str, key);
+        return codarixyWithKey(str, key);
     }
 
-    function encryptText(text, cipher, shift = 3) {
+    // ОБЩИЕ ФУНКЦИИ
+    function encrypt(text, cipher, shift) {
         switch(cipher) {
             case 'base64': return base64Enc(text);
             case 'rot13': return rot13(text);
             case 'atbash': return atbash(text);
             case 'caesar': return caesarEnc(text, shift);
-            case 'xor': return xorEncrypt(text, XOR_KEY);
+            case 'codarixy': return codarixyEncrypt(text, CODARIXY_KEY);
             default: return text;
         }
     }
 
-    function decryptText(text, cipher, shift = 3) {
+    function decrypt(text, cipher, shift) {
         switch(cipher) {
-            case 'base64': 
-                try { return base64Dec(text); } catch(e) { throw new Error('Неверный Base64'); }
+            case 'base64': return base64Dec(text);
             case 'rot13': return rot13(text);
             case 'atbash': return atbash(text);
             case 'caesar': return caesarDec(text, shift);
-            case 'xor':
-                try { return xorDecrypt(text, XOR_KEY); } catch(e) { throw new Error('Не удалось расшифровать XOR'); }
+            case 'codarixy': return codarixyDecrypt(text, CODARIXY_KEY);
             default: return text;
         }
     }
 
-    // UI элементы
+    // UI
     const inputArea = document.getElementById('inputText');
     const resultSpan = document.getElementById('resultText');
     const copyBtn = document.getElementById('copyBtn');
@@ -414,12 +274,12 @@
 
     document.getElementById('encryptBtn').onclick = () => {
         const text = inputArea.value.trim();
-        if (!text) { setResult("❌ Введите текст", "ошибка"); return; }
+        if(!text) { setResult("Введите текст", "ошибка"); return; }
         const cipher = cipherSelect.value;
         const shift = parseInt(shiftSlider.value);
         try {
-            const encrypted = encryptText(text, cipher, shift);
-            setResult(encrypted, `зашифровано (${cipher}) ✅`);
+            const res = encrypt(text, cipher, shift);
+            setResult(res, `зашифровано ✅`);
         } catch(e) {
             setResult("Ошибка шифрования", "ошибка");
         }
@@ -427,14 +287,14 @@
 
     document.getElementById('decryptBtn').onclick = () => {
         const data = inputArea.value.trim();
-        if (!data) { setResult("❌ Введите строку", "ошибка"); return; }
+        if(!data) { setResult("Введите строку", "ошибка"); return; }
         const cipher = cipherSelect.value;
         const shift = parseInt(shiftSlider.value);
         try {
-            const decrypted = decryptText(data, cipher, shift);
-            setResult(decrypted, `расшифровано (${cipher}) ✅`);
+            const res = decrypt(data, cipher, shift);
+            setResult(res, `расшифровано ✅`);
         } catch(e) {
-            setResult("❌ Расшифровка не удалась", "ошибка");
+            setResult("Ошибка расшифровки", "ошибка");
         }
     };
 
