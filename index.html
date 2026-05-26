@@ -6,45 +6,80 @@
     <title>Coder AR1XY — мультишифратор</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Светлая тема (по умолчанию) */
+        :root {
+            --bg: #d8f3dc;
+            --card: #f0fbf4;
+            --border: #b7e4c7;
+            --text: #1b4332;
+            --text-secondary: #2d6a4f;
+            --input-bg: white;
+            --accent: #40916c;
+            --accent-light: #52b788;
+            --badge-bg: #d8f3dc;
+        }
+        
+        /* Тёмная тема */
+        body.dark {
+            --bg: #0d1f1a;
+            --card: #1a2e25;
+            --border: #2d5a4a;
+            --text: #e8f5e9;
+            --text-secondary: #a5d6a7;
+            --input-bg: #0f281f;
+            --accent: #2d6a4f;
+            --accent-light: #40916c;
+            --badge-bg: #1e3a2f;
+        }
+        
         body {
-            background: #d8f3dc;
+            background: var(--bg);
             font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: background 0.3s;
         }
         .container { max-width: 650px; width: 100%; margin: 0 auto; }
         .card {
-            background: #f0fbf4;
+            background: var(--card);
             border-radius: 42px;
             padding: 28px 22px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border: 1px solid #b7e4c7;
+            border: 1px solid var(--border);
+            transition: background 0.3s, border 0.3s;
+            position: relative;
         }
-        .header { text-align: center; margin-bottom: 24px; position: relative; }
-        .secret-corner {
+        .theme-toggle {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 80px;
-            height: 80px;
-            background: transparent;
-            z-index: 10;
+            top: 20px;
+            right: 22px;
+            background: var(--badge-bg);
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
         }
-        .header h1 { color: #1b4332; font-size: 2rem; }
-        .header p { color: #2d6a4f; font-size: 0.85rem; }
+        .header { text-align: center; margin-bottom: 24px; margin-top: 8px; }
+        .header h1 { color: var(--text); font-size: 2rem; }
+        .header p { color: var(--text-secondary); font-size: 0.85rem; }
+        
         .cipher-select { margin-bottom: 20px; }
-        .cipher-select label { display: block; color: #1b4332; font-weight: 600; margin-bottom: 8px; }
+        .cipher-select label { display: block; color: var(--text); font-weight: 600; margin-bottom: 8px; }
         select, .caesar-slider {
             width: 100%;
             padding: 14px;
-            background: white;
-            border: 1px solid #b7e4c7;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
             border-radius: 28px;
             font-size: 1rem;
-            color: #1b4332;
+            color: var(--text);
+            cursor: pointer;
         }
         .caesar-slider {
             margin-top: 10px;
@@ -53,17 +88,18 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        input[type="range"] { flex: 2; min-width: 150px; }
-        .shift-value { background: #d8f3dc; padding: 6px 14px; border-radius: 40px; font-weight: bold; }
+        input[type="range"] { flex: 2; min-width: 150px; cursor: pointer; }
+        .shift-value { background: var(--badge-bg); padding: 6px 14px; border-radius: 40px; font-weight: bold; color: var(--text); }
         textarea {
             width: 100%;
             padding: 16px;
-            background: white;
-            border: 1px solid #b7e4c7;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
             border-radius: 28px;
             font-family: monospace;
             font-size: 0.95rem;
             resize: vertical;
+            color: var(--text);
         }
         .buttons { display: flex; gap: 14px; margin: 24px 0 28px; flex-wrap: wrap; }
         button {
@@ -74,19 +110,20 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            background: #40916c;
+            background: var(--accent);
             color: white;
+            transition: 0.2s;
         }
         button:active { transform: scale(0.97); }
         .result-section { margin-bottom: 24px; }
         .result-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .result-label span:first-child { font-weight: 600; color: #1b4332; }
-        .result-label span:last-child { background: #d8f3dc; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; color: #2d6a4f; }
+        .result-label span:first-child { font-weight: 600; color: var(--text); }
+        .result-label span:last-child { background: var(--badge-bg); padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; color: var(--text-secondary); }
         .result-box {
-            background: white;
+            background: var(--input-bg);
             border-radius: 28px;
             padding: 16px;
-            border-left: 5px solid #52b788;
+            border-left: 5px solid var(--accent-light);
             word-break: break-all;
             font-family: monospace;
             display: flex;
@@ -95,10 +132,10 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .result-text { flex: 1; color: #1b4332; }
-        .copy-btn { background: #d8f3dc; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; cursor: pointer; }
-        .footer { text-align: center; padding-top: 20px; border-top: 1px solid #b7e4c7; }
-        .footer a { color: #2d6a4f; text-decoration: none; font-weight: 600; }
+        .result-text { flex: 1; color: var(--text); }
+        .copy-btn { background: var(--badge-bg); border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; cursor: pointer; color: var(--text); }
+        .footer { text-align: center; padding-top: 20px; border-top: 1px solid var(--border); }
+        .footer a { color: var(--text-secondary); text-decoration: none; font-weight: 600; }
         @media (max-width: 500px) {
             .card { padding: 20px 16px; }
             .result-box { flex-direction: column; align-items: flex-start; }
@@ -109,7 +146,7 @@
 <body>
 <div class="container">
     <div class="card">
-        <div id="secretCorner" class="secret-corner"></div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
         <div class="header">
             <h1>Coder AR1XY 🌿</h1>
             <p>мультишифратор от AR1XY</p>
@@ -156,17 +193,44 @@
 </div>
 
 <script>
-    // ========== СЕКРЕТНЫЙ КЛЮЧ ДЛЯ CODARIXY ==========
+    // ========== ТЕМА ==========
+    const themeToggle = document.getElementById('themeToggle');
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+        themeToggle.textContent = '☀️';
+    }
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        const isDark = document.body.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    // ========== СЕКРЕТНЫЙ КЛЮЧ ==========
     const CODARIXY_KEY = "codarixy_secret_key";
     let secretRevealed = false;
 
-    // ========== ПАСХАЛКА (левый верхний угол 10 сек) ==========
+    // ========== ПАСХАЛКА (левый верхний угол карточки 10 сек) ==========
     let timer = null;
-    const corner = document.getElementById('secretCorner');
-    corner.addEventListener('touchstart', (e) => { e.preventDefault(); timer = setTimeout(() => { if(!secretRevealed){ secretRevealed=true; alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ "CODARIXY":\n\n${CODARIXY_KEY}`); } }, 10000); });
-    corner.addEventListener('touchend', () => { if(timer) clearTimeout(timer); });
-    corner.addEventListener('mousedown', () => { timer = setTimeout(() => { if(!secretRevealed){ secretRevealed=true; alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ:\n\n${CODARIXY_KEY}`); } }, 10000); });
-    corner.addEventListener('mouseup', () => { if(timer) clearTimeout(timer); });
+    const card = document.querySelector('.card');
+    
+    function showSecretKey() {
+        if(!secretRevealed){
+            secretRevealed = true;
+            alert(`🔐 СЕКРЕТНЫЙ КЛЮЧ ДЛЯ "CODARIXY":\n\n${CODARIXY_KEY}\n\nОн работает с любым текстом: русский, english, эмодзи 😀`);
+        }
+    }
+    
+    card.addEventListener('touchstart', (e) => { 
+        if(e.target.closest('.theme-toggle')) return;
+        timer = setTimeout(showSecretKey, 10000);
+    });
+    card.addEventListener('touchend', () => { if(timer) clearTimeout(timer); });
+    card.addEventListener('mousedown', (e) => { 
+        if(e.target.closest('.theme-toggle')) return;
+        timer = setTimeout(showSecretKey, 10000);
+    });
+    card.addEventListener('mouseup', () => { if(timer) clearTimeout(timer); });
 
     // ========== ШИФРЫ ==========
     const cipherSelect = document.getElementById('cipherType');
@@ -221,7 +285,7 @@
     function caesarEnc(str, shift) { return caesarShift(str, shift); }
     function caesarDec(str, shift) { return caesarShift(str, (26 - shift) % 26); }
 
-    // Codarixy (XOR с ключом, работает с любым текстом)
+    // ========== CODARIXY (работает с любыми символами: русский, английский, эмодзи) ==========
     function codarixyWithKey(str, key) {
         let result = '';
         for(let i = 0; i < str.length; i++) {
@@ -230,14 +294,15 @@
         return result;
     }
     function codarixyEncrypt(plain, key) {
-        return btoa(codarixyWithKey(plain, key));
+        const encrypted = codarixyWithKey(plain, key);
+        return btoa(encrypted);
     }
     function codarixyDecrypt(encoded, key) {
-        const str = atob(encoded);
-        return codarixyWithKey(str, key);
+        const encrypted = atob(encoded);
+        return codarixyWithKey(encrypted, key);
     }
 
-    // ОБЩИЕ ФУНКЦИИ
+    // ========== ОБЩИЕ ФУНКЦИИ ==========
     function encrypt(text, cipher, shift) {
         switch(cipher) {
             case 'base64': return base64Enc(text);
@@ -260,7 +325,7 @@
         }
     }
 
-    // UI
+    // ========== UI ==========
     const inputArea = document.getElementById('inputText');
     const resultSpan = document.getElementById('resultText');
     const copyBtn = document.getElementById('copyBtn');
@@ -274,7 +339,7 @@
 
     document.getElementById('encryptBtn').onclick = () => {
         const text = inputArea.value.trim();
-        if(!text) { setResult("Введите текст", "ошибка"); return; }
+        if(!text) { setResult("❌ Введите текст", "ошибка"); return; }
         const cipher = cipherSelect.value;
         const shift = parseInt(shiftSlider.value);
         try {
@@ -287,14 +352,14 @@
 
     document.getElementById('decryptBtn').onclick = () => {
         const data = inputArea.value.trim();
-        if(!data) { setResult("Введите строку", "ошибка"); return; }
+        if(!data) { setResult("❌ Введите строку", "ошибка"); return; }
         const cipher = cipherSelect.value;
         const shift = parseInt(shiftSlider.value);
         try {
             const res = decrypt(data, cipher, shift);
             setResult(res, `расшифровано ✅`);
         } catch(e) {
-            setResult("Ошибка расшифровки", "ошибка");
+            setResult("❌ Ошибка расшифровки", "ошибка");
         }
     };
 
