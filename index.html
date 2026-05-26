@@ -1,54 +1,361 @@
----
----
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>codarixy — шифрование</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>codarixy — шифратор</title>
     <style>
-        *{box-sizing:border-box}
-        body{background:#0b0f1c;font-family:monospace;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-        .card{background:#12172a;border-radius:42px;padding:2rem;max-width:750px;width:100%;border:1px solid #2a2f44}
-        h1{color:#b77cff;text-align:center}
-        .sub{text-align:center;color:#8e9aaf;margin-bottom:2rem}
-        textarea{width:100%;padding:16px;background:#010409;border:1px solid #2d3348;color:#e5e9f0;border-radius:24px;font-family:monospace;resize:vertical}
-        .btn-group{display:flex;gap:15px;margin:25px 0}
-        button{flex:1;background:#1f2a48;border:none;padding:12px;border-radius:60px;font-weight:bold;color:white;cursor:pointer}
-        button#encryptBtn{background:#3c2e5e;border:1px solid #9166ff}
-        button#decryptBtn{background:#1f3a4b;border:1px solid #4f9eff}
-        .result-box{background:#06080f;border-radius:24px;padding:16px;word-break:break-all;border-left:4px solid #b77cff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-        .copy-btn{background:#2a2f44;padding:6px 14px;border-radius:30px;cursor:pointer;border:none;color:white}
-        .footer{font-size:0.7rem;text-align:center;margin-top:2rem;color:#4b587c}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(30, 27, 75, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 28px 22px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* Заголовок */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #c084fc, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* Поле ввода */
+        .input-area {
+            margin-bottom: 24px;
+        }
+
+        .input-area label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            margin-left: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 16px;
+            background: #0f0c29;
+            border: 1px solid #3b2e6b;
+            color: #f1f5f9;
+            border-radius: 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
+        }
+
+        /* Кнопки */
+        .buttons {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px 0;
+            border: none;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-encrypt {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-decrypt {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        /* Результат */
+        .result-section {
+            margin-bottom: 24px;
+        }
+
+        .result-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            margin-left: 6px;
+        }
+
+        .result-label span:first-child {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .result-label span:last-child {
+            color: #a855f7;
+            font-size: 0.75rem;
+            background: rgba(168, 85, 247, 0.15);
+            padding: 4px 10px;
+            border-radius: 30px;
+        }
+
+        .result-box {
+            background: #0f0c29;
+            border-radius: 24px;
+            padding: 16px;
+            border-left: 4px solid #a855f7;
+            word-break: break-all;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .result-text {
+            flex: 1;
+        }
+
+        .copy-btn {
+            background: #2d2a5e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #4c3d8a;
+        }
+
+        /* Футер */
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .footer p {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .footer a {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Адаптив */
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px 16px;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            button {
+                padding: 12px 0;
+                font-size: 0.9rem;
+            }
+            .result-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .copy-btn {
+                align-self: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>codarixy 🔐</h1>
-    <div class="sub">XOR + Base64 · шифруй и расшифровывай</div>
-    <textarea id="inputArea" rows="4" placeholder="Текст для шифрования или зашифрованная строка..."></textarea>
-    <div class="btn-group">
-        <button id="encryptBtn">🔒 ЗАШИФРОВАТЬ</button>
-        <button id="decryptBtn">🔓 РАСШИФРОВАТЬ</button>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1>🔐 codarixy</h1>
+            <p>Шифратор от AR1XY</p>
+        </div>
+
+        <div class="input-area">
+            <label>📝 Введите текст или зашифрованную строку</label>
+            <textarea id="inputText" rows="4" placeholder="Например: Привет мир&#10;или&#10;RkFeTUVAbUJSTUNEGWpFWFlV..."></textarea>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-encrypt" id="encryptBtn">🔒 ЗАШИФРОВАТЬ</button>
+            <button class="btn-decrypt" id="decryptBtn">🔓 РАСШИФРОВАТЬ</button>
+        </div>
+
+        <div class="result-section">
+            <div class="result-label">
+                <span>✨ Результат</span>
+                <span id="actionBadge">ожидание</span>
+            </div>
+            <div class="result-box">
+                <span class="result-text" id="resultText">—</span>
+                <button class="copy-btn" id="copyBtn" style="display: none;">📋 Копировать</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📱 Связь: <a href="https://t.me/odwob" target="_blank">@odwob в Telegram</a></p>
+            <p style="font-size: 0.7rem; opacity: 0.6;">XOR + Base64 | фиксированный ключ</p>
+        </div>
     </div>
-    <div class="result-box">
-        <span id="resultText">Результат появится здесь</span>
-        <button class="copy-btn" id="copyBtn" style="display:none;">📋 Копировать</button>
-    </div>
-    <div class="footer">⚡ ключ: <strong>codarixy_secret_key</strong></div>
 </div>
+
 <script>
-const SECRET_KEY="codarixy_secret_key";
-function xorWithKey(a,b){let r=new Uint8Array(a.length);for(let i=0;i<a.length;i++)r[i]=a[i]^b[i%b.length];return r;}
-function toBase64(b){return btoa(String.fromCharCode(...b));}
-function fromBase64(s){let b=atob(s),r=new Uint8Array(b.length);for(let i=0;i<b.length;i++)r[i]=b.charCodeAt(i);return r;}
-function encrypt(t){let a=new TextEncoder().encode(t),b=new TextEncoder().encode(SECRET_KEY);return toBase64(xorWithKey(a,b));}
-function decrypt(s){let a=fromBase64(s),b=new TextEncoder().encode(SECRET_KEY);return new TextDecoder().decode(xorWithKey(a,b));}
-const input=document.getElementById('inputArea'),result=document.getElementById('resultText'),copy=document.getElementById('copyBtn');
-function setRes(t){result.innerText=t;copy.style.display=t&&t!="Результат появится здесь"?"inline-block":"none";}
-document.getElementById('encryptBtn').onclick=()=>{let t=input.value.trim();if(!t)setRes("Введите текст");else try{setRes(encrypt(t));}catch(e){setRes("Ошибка");}};
-document.getElementById('decryptBtn').onclick=()=>{let s=input.value.trim();if(!s)setRes("Введите строку");else try{setRes(decrypt(s));}catch(e){setRes("Ошибка расшифровки");}};
-copy.onclick=()=>{navigator.clipboard.writeText(result.innerText);copy.innerText="Скопировано!";setTimeout(()=>copy.innerText="Копировать",1500);};
+    // ========== СЕКРЕТНЫЙ КЛЮЧ (только вы знаете) ==========
+    const SECRET_KEY = "codarixy_secret_key";
+    // ========================================================
+
+    function xorWithKey(dataBytes, keyBytes) {
+        const result = new Uint8Array(dataBytes.length);
+        for (let i = 0; i < dataBytes.length; i++) {
+            result[i] = dataBytes[i] ^ keyBytes[i % keyBytes.length];
+        }
+        return result;
+    }
+
+    function toBase64(bytes) {
+        return btoa(String.fromCharCode(...bytes));
+    }
+
+    function fromBase64(base64) {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    function encrypt(plainText) {
+        const encoder = new TextEncoder();
+        const plainBytes = encoder.encode(plainText);
+        const keyBytes = encoder.encode(SECRET_KEY);
+        const encryptedBytes = xorWithKey(plainBytes, keyBytes);
+        return toBase64(encryptedBytes);
+    }
+
+    function decrypt(encryptedBase64) {
+        const encryptedBytes = fromBase64(encryptedBase64);
+        const keyBytes = new TextEncoder().encode(SECRET_KEY);
+        const decryptedBytes = xorWithKey(encryptedBytes, keyBytes);
+        return new TextDecoder().decode(decryptedBytes);
+    }
+
+    const inputArea = document.getElementById('inputText');
+    const resultSpan = document.getElementById('resultText');
+    const copyBtn = document.getElementById('copyBtn');
+    const actionBadge = document.getElementById('actionBadge');
+
+    function setResult(text, action) {
+        resultSpan.innerText = text || "—";
+        actionBadge.innerText = action;
+        copyBtn.style.display = text && text !== "—" ? "inline-block" : "none";
+    }
+
+    document.getElementById('encryptBtn').onclick = () => {
+        const text = inputArea.value.trim();
+        if (!text) {
+            setResult("❌ Введите текст для шифрования", "ошибка");
+            return;
+        }
+        try {
+            const encrypted = encrypt(text);
+            setResult(encrypted, "зашифровано ✅");
+        } catch (e) {
+            setResult("Ошибка шифрования", "ошибка");
+        }
+    };
+
+    document.getElementById('decryptBtn').onclick = () => {
+        const data = inputArea.value.trim();
+        if (!data) {
+            setResult("❌ Введите строку для расшифровки", "ошибка");
+            return;
+        }
+        try {
+            const decrypted = decrypt(data);
+            setResult(decrypted, "расшифровано ✅");
+        } catch (e) {
+            setResult("❌ Не удалось расшифровать. Неверный ключ или данные повреждены.", "ошибка");
+        }
+    };
+
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(resultSpan.innerText);
+        copyBtn.innerText = "✅ Скопировано!";
+        setTimeout(() => {
+            copyBtn.innerText = "📋 Копировать";
+        }, 1500);
+    };
 </script>
 </body>
 </html>
